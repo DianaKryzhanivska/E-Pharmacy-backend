@@ -18,8 +18,9 @@ const getNearestStores = async (req, res) => {
 };
 
 const getCustomerReviews = async (req, res) => {
+  const { limit = 3 } = req.query;
   let filter = {};
-  const result = await CustomerReview.find(filter);
+  const result = await CustomerReview.find(filter).limit(limit);
   res.json(result);
 };
 
