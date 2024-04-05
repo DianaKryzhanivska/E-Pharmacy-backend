@@ -8,4 +8,6 @@ router.get("/stores", ctrl.getAllStores);
 
 router.get("/stores/nearest", ctrl.getNearestStores);
 
+router.get("/customer-reviews", ctrl.getCustomerReviews);
+
 module.exports = router;
