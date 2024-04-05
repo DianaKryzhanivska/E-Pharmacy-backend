@@ -12,4 +12,6 @@ router.get("/customer-reviews", ctrl.getCustomerReviews);
 
 router.get("/products", ctrl.getAllProducts);
 
+router.get("/products/:id", ctrl.getProductById);
+
 module.exports = router;

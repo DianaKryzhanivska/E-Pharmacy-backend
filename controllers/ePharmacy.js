@@ -3,6 +3,7 @@ const { NearestStore } = require("../models/nearestStores");
 const { Product } = require("../models/products");
 const { Store } = require("../models/stores");
 const ctrlWrapper = require("../services/ctrlWrapper");
+const httpError = require("../services/httpError");
 
 const getAllStores = async (req, res) => {
   let filter = {};
@@ -28,9 +29,19 @@ const getAllProducts = async (req, res) => {
   res.json(result);
 };
 
+const getProductById = async (req, res) => {
+  const { id } = req.params;
+  const result = await Product.findById(id);
+  if (!result) {
+    throw httpError(404, "Not found");
+  }
+  res.status(200).json(result);
+};
+
 module.exports = {
   getAllStores: ctrlWrapper(getAllStores),
   getNearestStores: ctrlWrapper(getNearestStores),
   getCustomerReviews: ctrlWrapper(getCustomerReviews),
   getAllProducts: ctrlWrapper(getAllProducts),
+  getProductById: ctrlWrapper(getProductById),
 };
