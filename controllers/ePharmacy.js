@@ -12,6 +12,7 @@ const getAllStores = async (req, res) => {
 };
 
 const getNearestStores = async (req, res) => {
+  const { limit = 6 } = req.body;
   let filter = {};
   const result = await NearestStore.find(filter).limit(limit);
   res.json(result);
