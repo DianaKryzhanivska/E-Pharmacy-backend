@@ -6,8 +6,9 @@ const ctrlWrapper = require("../services/ctrlWrapper");
 const httpError = require("../services/httpError");
 
 const getAllStores = async (req, res) => {
+  const { limit = 9 } = req.body;
   let filter = {};
-  const result = await Store.find(filter).sort({ name: 1 });
+  const result = await Store.find(filter).sort({ name: 1 }).limit(limit);
   res.json(result);
 };
 
