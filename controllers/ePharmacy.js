@@ -27,8 +27,9 @@ const getCustomerReviews = async (req, res) => {
 };
 
 const getAllProducts = async (req, res) => {
+  const { limit = 12 } = req.body;
   let filter = {};
-  const result = await Product.find(filter);
+  const result = await Product.find(filter).limit(limit);
   res.json(result);
 };
 
