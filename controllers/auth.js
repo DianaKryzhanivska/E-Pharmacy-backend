@@ -70,8 +70,22 @@ const logout = async (req, res) => {
   });
 };
 
+const getUserInfo = async (req, res) => {
+  const { email } = req.user;
+
+  const user = await User.findOne({ email });
+
+  res.json({
+    user: {
+      name: user.name,
+      email,
+    },
+  });
+};
+
 module.exports = {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
   logout: ctrlWrapper(logout),
+  getUserInfo: ctrlWrapper(getUserInfo),
 };
