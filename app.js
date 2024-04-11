@@ -4,6 +4,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 const ePharmacyRouter = require("./routes/api/ePharmacy");
+const authRouter = require("./routes/api/auth");
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", ePharmacyRouter);
+app.use("/api", authRouter);
 
 app.use((req, res) => {
   res.status(404).json({ message: "Not found" });
