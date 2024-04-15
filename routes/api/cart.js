@@ -7,4 +7,6 @@ const authenticate = require("../../middlewares/authenticate");
 
 router.get("/cart", authenticate, ctrl.getCartItems);
 
+router.put("/cart/update", authenticate, ctrl.updateCart);
+
 module.exports = router;
