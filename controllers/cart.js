@@ -17,15 +17,32 @@ const getCartItems = async (req, res) => {
     throw httpError(404, "User not found");
   }
 
-  if (!user.cart) {
-    const cart = await Cart.create({ userId, products: [] });
+  let cart = await Cart.findOne({ userId });
+
+  if (!cart) {
+    cart = await Cart.create({ userId, products: [] });
     user.cart = cart._id;
     await user.save();
   }
 
-  const cart = await Cart.findOne({ userId }).populate("products.productId");
+  const cartProducts = cart && cart.products ? cart.products : [];
 
-  res.json(cart.products);
+  let total = 0;
+  for (const item of cartProducts) {
+    const product = await Product.findById(item.productId);
+    if (!product) {
+      throw httpError(404, `Product with id ${item.productId} not found`);
+    }
+    total += product.price * item.quantity;
+  }
+
+  await Cart.findOneAndUpdate(
+    { userId },
+    { total: total.toFixed(2) },
+    { new: true }
+  );
+
+  res.json({ cartProducts, total });
 };
 
 const updateCart = async (req, res) => {
@@ -41,19 +58,24 @@ const updateCart = async (req, res) => {
     throw httpError(400, "Products array is required");
   }
 
+  let cart = await Cart.findOne({ userId });
+
+  let total = 0;
   const updatedProducts = [];
 
-  for (const { productId, quantity } of products) {
+  for (const item of products) {
+    const { productId, quantity } = item;
     const product = await Product.findById(productId);
     if (!product) {
       throw httpError(404, `Product with id ${productId} not found`);
     }
     updatedProducts.push({ productId, quantity });
+    total += product.price * quantity;
   }
 
-  const cart = await Cart.findOneAndUpdate(
+  cart = await Cart.findOneAndUpdate(
     { userId },
-    { products: updatedProducts },
+    { products: updatedProducts, total: total.toFixed(2) },
     { new: true }
   );
 
@@ -66,7 +88,19 @@ const updateCart = async (req, res) => {
   res.status(200).json(cart);
 };
 
+const cartCheckout = async (req, res) => {
+  const { _id: userId } = req.user;
+  const { name, email, phone, address, payment } = req.body;
+  const result = await Cart.findOneAndUpdate(
+    { userId },
+    { name, email, phone, address, payment, isOrdered: true },
+    { new: true }
+  );
+  res.status(200).json(result);
+};
+
 module.exports = {
   getCartItems: ctrlWrapper(getCartItems),
   updateCart: ctrlWrapper(updateCart),
+  cartCheckout: ctrlWrapper(cartCheckout),
 };

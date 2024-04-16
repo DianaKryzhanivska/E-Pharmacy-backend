@@ -4,9 +4,23 @@ const router = express.Router();
 
 const ctrl = require("../../controllers/cart");
 const authenticate = require("../../middlewares/authenticate");
+const validateBody = require("../../middlewares/validateBody");
+const { schemas } = require("../../models/cart");
 
 router.get("/cart", authenticate, ctrl.getCartItems);
 
-router.put("/cart/update", authenticate, ctrl.updateCart);
+router.put(
+  "/cart/update",
+  authenticate,
+  validateBody(schemas.updateCartSchema),
+  ctrl.updateCart
+);
+
+router.post(
+  "/cart/checkout",
+  authenticate,
+  validateBody(schemas.cartCheckoutSchema),
+  ctrl.cartCheckout
+);
 
 module.exports = router;
