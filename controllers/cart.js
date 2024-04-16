@@ -17,7 +17,10 @@ const getCartItems = async (req, res) => {
     throw httpError(404, "User not found");
   }
 
-  let cart = await Cart.findOne({ userId });
+  let cart = await Cart.findOne({ userId }).populate({
+    path: "products.productId",
+    model: "product",
+  });
 
   if (!cart) {
     cart = await Cart.create({ userId, products: [] });
@@ -29,7 +32,7 @@ const getCartItems = async (req, res) => {
 
   let total = 0;
   for (const item of cartProducts) {
-    const product = await Product.findById(item.productId);
+    const product = item.productId;
     if (!product) {
       throw httpError(404, `Product with id ${item.productId} not found`);
     }
