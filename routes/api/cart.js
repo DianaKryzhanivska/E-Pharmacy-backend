@@ -30,6 +30,6 @@ router.patch(
   ctrl.addToCart
 );
 
-router.delete("/cart/remove", authenticate, ctrl.deleteFromCart);
+router.delete("/cart/remove/:productId", authenticate, ctrl.deleteFromCart);
 
 module.exports = router;

@@ -140,7 +140,7 @@ const addToCart = async (req, res) => {
 
 const deleteFromCart = async (req, res) => {
   const { _id: userId } = req.user;
-  const { productId } = req.body;
+  const { productId } = req.params;
 
   if (!userId) {
     throw httpError(400, "User id is required");
