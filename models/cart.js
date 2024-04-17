@@ -80,9 +80,15 @@ const cartCheckoutSchema = Joi.object({
     .required("Payment method is required"),
 });
 
+const addToCartSchema = Joi.object({
+  productId: Joi.string().required("Product id is required"),
+  quantity: Joi.number().integer().required("Product quantity is required"),
+});
+
 const schemas = {
   updateCartSchema,
   cartCheckoutSchema,
+  addToCartSchema,
 };
 
 const Cart = model("cart", cartSchema);

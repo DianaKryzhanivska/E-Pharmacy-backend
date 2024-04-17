@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const { Cart } = require("../models/cart");
 const { Product } = require("../models/products");
 const { User } = require("../models/users");
@@ -102,8 +103,44 @@ const cartCheckout = async (req, res) => {
   res.status(200).json(result);
 };
 
+const addToCart = async (req, res) => {
+  const { _id: userId } = req.user;
+  const { productId, quantity } = req.body;
+
+  if (!userId) {
+    throw httpError(400, "User id is required");
+  }
+
+  let cart = await Cart.findOne({ userId });
+
+  if (!cart) {
+    cart = new Cart({
+      userId,
+      products: [{ productId, quantity }],
+    });
+  } else {
+    const existingProduct = cart.products.find(
+      (product) => product.productId.toString() === productId
+    );
+
+    if (existingProduct) {
+      existingProduct.quantity += quantity;
+    } else {
+      cart.products.push({
+        productId,
+        quantity,
+      });
+    }
+  }
+
+  await cart.save();
+
+  res.status(200).json(cart);
+};
+
 module.exports = {
   getCartItems: ctrlWrapper(getCartItems),
   updateCart: ctrlWrapper(updateCart),
   cartCheckout: ctrlWrapper(cartCheckout),
+  addToCart: ctrlWrapper(addToCart),
 };
