@@ -138,9 +138,45 @@ const addToCart = async (req, res) => {
   res.status(200).json(cart);
 };
 
+const deleteFromCart = async (req, res) => {
+  const { _id: userId } = req.user;
+  const { productId } = req.body;
+
+  if (!userId) {
+    throw httpError(400, "User id is required");
+  }
+
+  if (!productId) {
+    throw httpError(400, "Product id is required");
+  }
+
+  let cart = await Cart.findOne({ userId });
+
+  const searchedProduct = cart.products.find(
+    (product) => product.productId.toString() === productId
+  );
+
+  if (!searchedProduct) {
+    throw httpError(404, "There is no product with this id in the cart");
+  }
+
+  const newProducts = cart.products.filter(
+    (product) => product.productId.toString() !== productId
+  );
+
+  cart = await Cart.findOneAndUpdate(
+    { userId },
+    { products: newProducts },
+    { new: true }
+  );
+
+  res.status(200).json(cart);
+};
+
 module.exports = {
   getCartItems: ctrlWrapper(getCartItems),
   updateCart: ctrlWrapper(updateCart),
   cartCheckout: ctrlWrapper(cartCheckout),
   addToCart: ctrlWrapper(addToCart),
+  deleteFromCart: ctrlWrapper(deleteFromCart),
 };
