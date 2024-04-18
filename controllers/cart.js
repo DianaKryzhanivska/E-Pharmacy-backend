@@ -138,6 +138,43 @@ const addToCart = async (req, res) => {
   res.status(200).json(cart);
 };
 
+const decreaseQuantity = async (req, res) => {
+  const { _id: userId } = req.user;
+  const { productId, quantity } = req.body;
+
+  if (!userId) {
+    throw httpError(400, "User id is required");
+  }
+
+  let cart = await Cart.findOne({ userId });
+
+  if (!cart) {
+    cart = new Cart({
+      userId,
+      products: [{ productId, quantity }],
+    });
+  } else {
+    const existingProduct = cart.products.find(
+      (product) => product.productId.toString() === productId
+    );
+
+    console.log(existingProduct);
+
+    if (existingProduct.quantity === 1) {
+      const updatedProducts = cart.products.filter(
+        (product) => product.productId.toString() !== productId
+      );
+      cart.products = updatedProducts;
+    } else {
+      existingProduct.quantity -= 1;
+    }
+  }
+
+  await cart.save();
+
+  res.status(200).json(cart);
+};
+
 const deleteFromCart = async (req, res) => {
   const { _id: userId } = req.user;
   const { productId } = req.params;
@@ -178,5 +215,6 @@ module.exports = {
   updateCart: ctrlWrapper(updateCart),
   cartCheckout: ctrlWrapper(cartCheckout),
   addToCart: ctrlWrapper(addToCart),
+  decreaseQuantity: ctrlWrapper(decreaseQuantity),
   deleteFromCart: ctrlWrapper(deleteFromCart),
 };

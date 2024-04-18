@@ -85,10 +85,16 @@ const addToCartSchema = Joi.object({
   quantity: Joi.number().integer().required("Product quantity is required"),
 });
 
+const decreaseQuantitySchema = Joi.object({
+  productId: Joi.string().required("Product id is required"),
+  quantity: Joi.number().integer().required("Product quantity is required"),
+});
+
 const schemas = {
   updateCartSchema,
   cartCheckoutSchema,
   addToCartSchema,
+  decreaseQuantitySchema,
 };
 
 const Cart = model("cart", cartSchema);
