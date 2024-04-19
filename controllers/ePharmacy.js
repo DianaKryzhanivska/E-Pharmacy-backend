@@ -36,6 +36,10 @@ const getAllProducts = async (req, res) => {
   if (name) {
     filter.name = { $regex: new RegExp(name, "i") };
   }
+
+  const totalProducts = await Product.countDocuments(filter);
+  const totalPages = Math.ceil(totalProducts / limit);
+
   const result = await Product.find(filter, "-createdAt -updatedAt", {
     skip,
     limit,
@@ -43,7 +47,12 @@ const getAllProducts = async (req, res) => {
   if (result.length === 0) {
     throw httpError(404, "Not found");
   }
-  res.json(result);
+  res.json({
+    currentPage: page,
+    totalPages: totalPages,
+    totalProducts: totalProducts,
+    products: result,
+  });
 };
 
 const getProductById = async (req, res) => {
