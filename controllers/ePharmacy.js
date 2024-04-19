@@ -48,7 +48,7 @@ const getAllProducts = async (req, res) => {
     throw httpError(404, "Not found");
   }
   res.json({
-    currentPage: page,
+    currentPage: Number(page),
     totalPages: totalPages,
     totalProducts: totalProducts,
     products: result,
