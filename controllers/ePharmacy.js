@@ -27,9 +27,22 @@ const getCustomerReviews = async (req, res) => {
 };
 
 const getAllProducts = async (req, res) => {
-  const { limit = 12 } = req.body;
+  const { category, name, page = 1, limit = 12 } = req.query;
+  const skip = (page - 1) * limit;
   let filter = {};
-  const result = await Product.find(filter).limit(limit);
+  if (category) {
+    filter.category = category;
+  }
+  if (name) {
+    filter.name = { $regex: new RegExp(name, "i") };
+  }
+  const result = await Product.find(filter, "-createdAt -updatedAt", {
+    skip,
+    limit,
+  });
+  if (result.length === 0) {
+    throw httpError(404, "Not found");
+  }
   res.json(result);
 };
 
