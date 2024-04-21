@@ -35,7 +35,7 @@ const getCartItems = async (req, res) => {
   for (const item of cartProducts) {
     const product = item.productId;
     if (!product) {
-      throw httpError(404, `Product with id ${item.productId} not found`);
+      continue;
     }
     total += product.price * item.quantity;
   }
