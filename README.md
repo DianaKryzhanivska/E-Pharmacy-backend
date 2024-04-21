@@ -4,7 +4,7 @@ This is the repository of the E-Pharmacy-backend project, which provides an API 
 
 ## Project overview
 
-This project implements the server side of the [test-task-contacts](https://github.com/DianaKryzhanivska/test-task-contacts) application. It is built on Node.js, using the Express.js framework to implement the API and Mongoose to interact with the MongoDB database.
+This project implements the server side of the [E-Pharmacy](https://github.com/DianaKryzhanivska/E-Pharmacy) application. It is built on Node.js, using the Express.js framework to implement the API and Mongoose to interact with the MongoDB database.
 
 ## Requirements
 
